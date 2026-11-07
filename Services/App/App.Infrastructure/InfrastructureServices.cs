@@ -1,7 +1,8 @@
-﻿using App.Infrastructure.Services.AccountLedgers;
-using App.Infrastructure.Services.Products;
+﻿using App.Infrastructure.Services.Products;
+using App.Infrastructure.Services.Addresses;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using App.Infrastructure.Services.AccountLedgers;
 
 
 namespace App.Infrastructure
@@ -24,6 +25,7 @@ namespace App.Infrastructure
 
             _ = services.AddScoped<IProductService, ProductService>();
             _ = services.AddScoped<IAccountLedgerService, AccountLedgerService>();
+            _ = services.AddScoped<IAddressService, AddressService>();
 
             return services;
         }

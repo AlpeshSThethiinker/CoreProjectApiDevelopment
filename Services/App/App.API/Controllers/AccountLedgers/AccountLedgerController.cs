@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 
 namespace App.API.Controllers.AccountLedger;
-    [Route("api/[controller]")]
-    [ApiController]
+[Route("api/[controller]")]
+[ApiController]
 public class AccountLedgerController : BaseController
 {
     public AccountLedgerController(IMediator mediator) : base(mediator)

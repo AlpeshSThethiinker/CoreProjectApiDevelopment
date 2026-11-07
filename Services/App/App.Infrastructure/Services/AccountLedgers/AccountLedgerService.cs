@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using App.Domain.Entities.AccountLedger;
 using App.Domain.ViewModels.AccountLedger;
-//using App.Infrastructure.Services.AccountLedgers.ServiceModel;
 
 namespace App.Infrastructure.Services.AccountLedgers;
 
@@ -26,104 +25,92 @@ public class AccountLedgerService : IAccountLedgerService
     private readonly IBaseRepository<AccountLedger> _accountLedgerRepository;
     private readonly AppDbContext _dbContext;
 
-   public AccountLedgerService(IBaseRepository<AccountLedger> accountLedgerRepository, AppDbContext appDbContext)
-   {
-        _accountLedgerRepository = accountLedgerRepository ?? throw new ArgumentNullException(nameof(accountLedgerRepository));
-        _dbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
+    public AccountLedgerService(IBaseRepository<AccountLedger> accountLedgerRepository, AppDbContext appDbContext)
+    {
+        _accountLedgerRepository = accountLedgerRepository
+            ?? throw new ArgumentNullException(nameof(accountLedgerRepository));
 
+        _dbContext = appDbContext
+            ?? throw new ArgumentNullException(nameof(appDbContext));
     }
 
-    public async Task<AccountLedger> Delete(long AccountLedgerId)
+    public async Task<AccountLedger> GetAccountLedgerById(long AccountLedgerId)
     {
-        try
-        {
-            AccountLedger? entity = await _accountLedgerRepository.GetByIdAsync(AccountLedgerId);
-            entity.Deleted = true;
-            await _accountLedgerRepository.UpdateAsync(entity);
-            return entity;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ResponseMessages.ExceptionOccurred + ex.Message);
-        }
-    }
+        var entity = await _accountLedgerRepository.GetByIdAsync(AccountLedgerId);
 
-    public Task<AccountLedger> GetAccountLedgerById(long AccountLedgerId)
-    {
-        throw new NotImplementedException();
+        return entity!;
     }
 
     public async Task<List<AccountLedgerVM>> GetAll(GetAllAccountLedgerRequestModel request)
     {
         try
         {
-            var sql = $"Exec sp_GetAllAccountLedger " +
-                $"@GetAll='{request.GetAll}', " +
-                $"@page_size='{request.PageSize}', " +
-                $"@page_num='{request.Page}', " +
-                $"@SearchText='{request.SearchText ?? ""}'," +
-                $"@fromDate='{request.FromDate}'," +
-                $"@toDate='{request.ToDate}'," +
-                $"@totalRows='{request.total_rows}'," +
-                $"@totalPages='{request.total_pages}'," +
-                $"@OrderBy='{(!string.IsNullOrEmpty(request.OrderBy) ? "" + request.OrderBy + "" : "id asc")}'";
-            var value = await _dbContext.AccountLedgerVMs.FromSqlRaw(sql).ToListAsync();
-            if (value == null) { throw new InvalidOperationException(" Value Not found."); }
-            return value.ToList();
+            var orderBy = string.IsNullOrWhiteSpace(request.OrderBy)
+                ? "AccountGroupId ASC"
+                : request.OrderBy;
+
+            var result = await _dbContext.AccountLedgerVMs
+                .FromSqlInterpolated($@"
+                    EXEC dbo.sp_GetAllAccountLedger
+                        @GetAll = {request.GetAll},
+                        @page_size = {request.PageSize},
+                        @page_num = {request.Page},
+                        @totalRows = {request.total_rows},
+                        @totalPages = {request.total_pages},
+                        @SearchText = {request.SearchText ?? ""},
+                        @OrderBy = {orderBy},
+                        @fromDate = {request.FromDate ?? ""},
+                        @toDate = {request.ToDate ?? ""}
+                ")
+                .AsNoTracking()
+                .ToListAsync();
+
+            return result;
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            throw new Exception(
+                "Error while fetching AccountLedger records: " + ex.Message, ex);
         }
     }
 
-
-    public async Task<List<AccountLedger>> GetAsync(Expression<Func<AccountLedger, bool>> predicate)
+    public async Task<List<AccountLedger>> GetAsync(
+        Expression<Func<AccountLedger, bool>> predicate)
     {
-        return await _dbContext.Set<AccountLedger>().Where(predicate).ToListAsync();
+        return await _dbContext.Set<AccountLedger>()
+            .Where(predicate)
+            .ToListAsync();
     }
 
-    public async Task<AccountLedger> GetById(long AccountLedgerId)
+    public async Task<AccountLedger> Delete(long AccountLedgerId)
     {
         try
         {
-            AccountLedger? entity = await _accountLedgerRepository.GetByIdAsync(AccountLedgerId);
-            if (entity is null)
-                return null!;
+            var entity = await _accountLedgerRepository.GetByIdAsync(AccountLedgerId);
+
+            if (entity == null)
+                throw new Exception("AccountLedger record not found.");
+
+            entity.Deleted = true;
+
+            await _accountLedgerRepository.UpdateAsync(entity);
 
             return entity;
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            throw new Exception(ex.Message, ex);
         }
     }
 
     public async Task<AccountLedger> Insert(AccountLedger request)
     {
-        try
-        {
-            AccountLedger entity = new();
-            entity = await _accountLedgerRepository.AddAsync(request);
-            return entity;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        return await _accountLedgerRepository.AddAsync(request);
     }
-
 
     public async Task<AccountLedger> Update(AccountLedger Data)
     {
-        try
-        {
-            await _accountLedgerRepository.UpdateAsync(Data);
-            return Data;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
+        await _accountLedgerRepository.UpdateAsync(Data);
+        return Data;
     }
 }

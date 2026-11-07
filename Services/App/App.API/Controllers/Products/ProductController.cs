@@ -1,5 +1,4 @@
-﻿
-using App.Application.Features.Products.Commands.AddProduct;
+﻿using App.Application.Features.Products.Commands.AddProduct;
 using App.Application.Features.Products.Commands.DeleteProduct;
 using App.Application.Features.Products.Commands.UpdateProduct;
 using App.Application.Features.Products.Queries.GetAllProduct;
@@ -70,7 +69,7 @@ public class ProductController : BaseController
 
     #region Delete
     [HttpDelete]
-    [Route("DeleteProduct")]
+    [Route("deleteProduct")]
     public async Task<ActionResult<ResponseModel>> DeleteProduct(long Id)
     {
         ResponseModel response = new();
@@ -93,7 +92,7 @@ public class ProductController : BaseController
 
     #region getall
     [HttpPost]
-    [Route("GetAllProduct")]
+    [Route("getallProduct")]
     public async Task<ActionResult<ResponseModel>> GetAllProduct([FromBody] GetAllProductQuery model)
     {
         ResponseModel response = new();
@@ -117,7 +116,7 @@ public class ProductController : BaseController
 
     #region getbyid
     [HttpGet]
-    [Route("GetByIdProduct")]
+    [Route("GetbyidProduct")]
     public async Task<ActionResult<ResponseModel>> GetByIdProduct(long Id)
     {
         ResponseModel response = new();
@@ -129,7 +128,7 @@ public class ProductController : BaseController
                 return BadRequest(response);
             }
 
-            return await _mediator.Send(new GetByIdQuery() { Id = Id });
+            return await _mediator.Send(new GetProductByIdQuery() { Id = Id });
         }
         catch (Exception ex)
         {

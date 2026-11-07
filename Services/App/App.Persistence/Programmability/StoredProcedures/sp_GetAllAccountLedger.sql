@@ -36,7 +36,7 @@ BEGIN
             FROM [fn_GetAllAccountLedger](
                 ''' + ISNULL(@SearchText, '') + ''',
                 ''' + ISNULL(@fromDate, '') + ''',
-                ''' + ISNULL(@toDate, '') + ''',
+                ''' + ISNULL(@toDate, '') + '''
             )
         ) AS data
         ORDER BY ' + ISNULL(@OrderBy, 'Id desc') + '

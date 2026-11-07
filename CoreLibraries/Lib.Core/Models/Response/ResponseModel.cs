@@ -4,8 +4,6 @@ namespace Lib.Core.Models.Response
 {
     public class ResponseModel
     {
-        public int statusCode;
-
         public ResponseModel()
         {
             StatusCode = (int)HttpStatusCode.BadRequest;
@@ -22,8 +20,6 @@ namespace Lib.Core.Models.Response
         public long TotalRecords { get; set; }
 
         public bool IsSuccess => (StatusCode == (int)HttpStatusCode.OK) ? true : false;
-
-        public object Error { get; set; }
     }
 
     public enum HttpStatusCode

@@ -1,16 +1,12 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using App.Domain.ViewModels.Addresses;
+//using App.Domain.ViewModels.Addresses;
 using Lib.Core.Models.Response;
+using MediatR;
 
-namespace App.Application.Features.AccountLedgers.Commands.UpdateAccountLedger;
-
-public class UpdateAccountLedgerCommand : IRequest<ResponseModel>
+namespace App.Application.Features.AccountLedgers.Commands.AddAccountLedger;
+public class AddAccountLedgerCommand : IRequest<ResponseModel>
 {
-    public long? AccountGroupId { get; set; }
     public string? AccountNo { get; set; }
     public int? LedgerTypeId { get; set; }
     public string? LedgerName { get; set; }
@@ -20,4 +16,10 @@ public class UpdateAccountLedgerCommand : IRequest<ResponseModel>
     public string? Mobile { get; set; }
     public string? MobileNoDialCode { get; set; }
     public string? Email { get; set; }
+
+    //add address propertie
+    public List<AddressVM> Addresses { get; set; } = new();
+
 }
+
+
