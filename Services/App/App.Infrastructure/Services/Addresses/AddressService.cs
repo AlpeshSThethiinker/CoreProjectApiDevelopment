@@ -21,7 +21,7 @@ public interface IAddressService
     //Task<List<AddressEntity>> GetAll(GetAllAddressRequestModel request);
     Task<List<AddressVM>> GetAll(GetAllAddressRequestModel request);
     Task<List<AddressEntity>> GetAsync(Expression<Func<AddressEntity, bool>> predicate);
-
+    Task GetAddressById(object value);
 }
 
 public class AddressService : IAddressService
@@ -104,6 +104,11 @@ public class AddressService : IAddressService
     {
         await _addressRepository.UpdateAsync(Data);
         return Data;
+    }
+
+    public Task GetAddressById(object value)
+    {
+        throw new NotImplementedException();
     }
 
     //Task<List<Address>> IAddressService.GetAll(GetAllAddressRequestModel request)

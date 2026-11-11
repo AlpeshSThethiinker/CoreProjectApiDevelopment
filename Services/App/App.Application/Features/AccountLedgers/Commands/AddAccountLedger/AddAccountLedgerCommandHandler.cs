@@ -1,7 +1,7 @@
 ﻿
 using App.Application.Features.AccountLedgers.Commands.AddAccountLedger;
 using App.Domain.Entities.AccountLedger;
-using AddressEntity = App.Domain.Entities.Addresses.Address;
+using App.Domain.Entities.Addresses;
 using App.Infrastructure.Helpers;
 using App.Infrastructure.Messages;
 using App.Infrastructure.Services.AccountLedgers;
@@ -27,9 +27,7 @@ public class AddAccountLedgerCommandHandler : IRequestHandler<AddAccountLedgerCo
             ?? throw new ArgumentNullException(nameof(addressService));
     }
 
-    public async Task<ResponseModel> Handle(
-        AddAccountLedgerCommand request,
-        CancellationToken cancellationToken)
+    public async Task<ResponseModel> Handle(AddAccountLedgerCommand request, CancellationToken cancellationToken)
     {
         ResponseModel response = new();
 
@@ -54,7 +52,7 @@ public class AddAccountLedgerCommandHandler : IRequestHandler<AddAccountLedgerCo
                 {
                     foreach (var item in request.Addresses)
                     {
-                        AddressEntity address = new()
+                        Address address = new()
                         {
                             // AccountLedger generated ID
                             AccountGroupId = insertAccountLedger.Id,

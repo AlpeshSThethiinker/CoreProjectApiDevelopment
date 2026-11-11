@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
+using App.Domain.ViewModels.Addresses;
 namespace App.Application.Features.AccountLedgers.Queries.GetAccountLedgerById;
 
 public class GetAccountLedgerByIdQueryResponse
@@ -18,5 +14,8 @@ public class GetAccountLedgerByIdQueryResponse
     public string? Mobile { get; set; }
     public string? MobileNoDialCode { get; set; }
     public string? Email { get; set; }
+
+    //add address propertie
+    public List<AddressVM> Addresses { get; set; } = new();
 
 }

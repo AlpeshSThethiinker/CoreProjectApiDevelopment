@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿
+using MediatR;
 using Lib.Core.Models.Response;
 using App.Domain.ViewModels.Addresses;
 
@@ -17,6 +18,5 @@ public class UpdateAccountLedgerCommand : IRequest<ResponseModel>
     public string? MobileNoDialCode { get; set; }
     public string? Email { get; set; }
 
-    //add address propertie
     public List<AddressVM> Addresses { get; set; } = new();
 }
